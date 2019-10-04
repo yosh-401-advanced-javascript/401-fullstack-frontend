@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import todoActions from '../../store/actions/todos';
+import todoActions from '../../store/actions/pokemon';
 
 const Todos = (props) => {
   const [todoTitle, setTodoTitle] = useState('');

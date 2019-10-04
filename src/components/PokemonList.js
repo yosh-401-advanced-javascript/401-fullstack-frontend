@@ -1,13 +1,14 @@
 import React from 'react';
 import PokemonCard from './PokemonCard';
+import StatsBox from './StatsBox';
 
-const PokemonList = ({ pokemon }) => {
+const PokemonList = () => {
   return (
     <section className="list" >
-      <PokemonCard/>
-      <PokemonCard/>
-      <PokemonCard/>
-      <PokemonCard/>
+      <PokemonCard>
+        <StatsBox/>
+      </PokemonCard>
+
     </section>
   );
 };

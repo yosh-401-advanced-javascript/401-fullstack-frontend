@@ -24,6 +24,7 @@
     "arrow-body-style": "off",
     "class-methods-use-this": "off",
     "global-require": "off",
+    "react/prop-types": 0,
     "import/no-extraneous-dependencies": [
       "error",
       {
