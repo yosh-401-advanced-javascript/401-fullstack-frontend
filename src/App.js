@@ -1,26 +1,41 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './app.css';
+import Auth from './components/auth/auth';
+import Login from './components/auth/login';
+import LoginProvider from './components/auth/context';
+import PokemonApp from './components/PokemonApp';
 
-function App() {
+
+const Read = props => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Auth capability = 'read'>
+        <span>Re</span>
+      </Auth>
   );
+};
+
+const Update = props => {
+  return (
+    <Auth capability='update'>
+      <span>Up</span>
+    </Auth>
+  );
+};
+
+class App extends React.Component {
+  render() {
+    return (
+      <div>
+      <LoginProvider>
+        <Login />
+        <hr />
+        <PokemonApp />
+        <Read/>
+        <Update/>
+      </LoginProvider>
+      </div>
+    );
+  }
 }
 
 export default App;

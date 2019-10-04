@@ -5,7 +5,7 @@
 
 
 
-describe('Pokemon API', () => {
+describe('PokemonApp API', () => {
   it('should', () => {
     const twoPlusTwo = 2 + 2;
     expect(twoPlusTwo).toEqual(4);
