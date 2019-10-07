@@ -1,11 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { LoginContext } from './context';
-
-
-const If = (props) => {
-  return !props.condition ? props.children : null;
-};
+import If from '../If';
 
 class Auth extends React.Component {
   static contextType = LoginContext;
@@ -29,9 +24,5 @@ class Auth extends React.Component {
   }
 }
 
-Auth.propTypes = {
-  children: PropTypes.object,
-  capability: PropTypes.string,
-};
 
 export default Auth;

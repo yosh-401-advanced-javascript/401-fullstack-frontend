@@ -1,5 +1,4 @@
 import React from 'react';
-import jwt from 'jsonwebtoken';
 import cookie from 'react-cookies';
 
 export const LoginContext = React.createContext();
@@ -52,8 +51,7 @@ class LoginProvider extends React.Component {
   // validate token
   validateToken = (token) => {
     try {
-      const user = jwt.verify(token, process.env.REACT_APP_SECRET);
-      console.log(user);
+      let user;
       this.setLoginState(true, user, token);
     } catch (error) {
       this.setLoginState(false, null, {});
