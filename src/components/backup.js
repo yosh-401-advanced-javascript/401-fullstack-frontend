@@ -1,18 +1,17 @@
 // eslint-disable-next-line max-classes-per-file
 import React from 'react';
-// import PokemonSprites from './PokemonSprites';
 import NumInput from './NumInput';
-// import AbilitiesList from './AbilitiesList';
+import Login from './auth/login';
+import PokemonSprites from './PokemonSprites';
 
 const POKEMON = 1;
-const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const padStats = (stat, value, separation, len) => {
   // eslint-disable-next-line no-param-reassign
   value = value || 'xx';
   return `${stat.toString()}${separation.repeat(len - (value.toString().length + stat.toString().length))}${value.toString()}`;
 };
 
-class Pokedex extends React.Component {
+class PokemonApp extends React.Component {
   constructor(props) {
     super(props);
 
@@ -35,7 +34,7 @@ class Pokedex extends React.Component {
   };
 
   previousPokemonHandler = () => {
-    const previous = Math.min(this.state.pokemonIDX - 1, 1);
+    const previous = Math.min(this.state.pokemonIDX - 1, 0);
     this.setState({ pokemonIDX: previous }, this.changePokemon);
   };
 
@@ -61,20 +60,19 @@ class Pokedex extends React.Component {
       const speciesRequest = pokeData.species.url;
       return fetch(speciesRequest);
     }).then((response) => response.json())
-      .then((pokeData) => {
-        this.setState({
-          speciesData: pokeData,
-          pokemonDescription: pickRandom(
+    .then((pokeData) => {
+      this.setState({
+        speciesData: pokeData,
+        pokemonDescription:
             pokeData.flavor_text_entries.filter(
-              (element) => element.language.name === 'en',
+                (element) => element.language.name === 'en',
             ).map((element) => element.flavor_text),
-          ),
-          loading: false,
-        });
-        const evolutionChain = pokeData.evolution_chain.url;
-        fetch(evolutionChain)
-          .then((response) => response.json())
-        // eslint-disable-next-line no-shadow
+        loading: false,
+      });
+      const evolutionChain = pokeData.evolution_chain.url;
+      fetch(evolutionChain)
+      .then((response) => response.json())
+      // eslint-disable-next-line no-shadow
           .then((pokeData) => {
             const pokeAPI = 'http://pokeapi.co/api/v2/pokemon/';
             const firstEvolution = pokeData.chain;
@@ -98,18 +96,18 @@ class Pokedex extends React.Component {
               evolutionsArray.push(e3);
             }
             Promise.all(evolutionsArray).then((response) => Promise.all(
-              response.map((responseValue) => responseValue.json()),
+                response.map((responseValue) => responseValue.json()),
             )).then((pokemonDataList) => {
               const sprites = pokemonDataList.map(
-                (img) => img.sprites.front_default,
+                  (img) => img.sprites.front_default,
               );
               const names = pokemonDataList.map((n) => n.name);
               this.setState(
-                { evolutionSprites: sprites, evolutionNames: names },
+                  { evolutionSprites: sprites, evolutionNames: names },
               );
             });
           });
-      });
+    });
   };
 
 
@@ -118,6 +116,7 @@ class Pokedex extends React.Component {
     const sData = this.state.speciesData;
 
     return (
+
         <div className="pokedex-wrapper">
           <LeftSidePanel
               pData={pData}
@@ -136,7 +135,6 @@ class Pokedex extends React.Component {
                 pickPokemon: this.state.pickPokemonHandler,
               }}
           />
-          no={this.state.pokemonIDX}
         </div>
     );
   }
@@ -149,7 +147,8 @@ const LeftSidePanel = (props) => {
         <div className="panel left-panel">
           <PokemonName name={pData.name} no={props.no}/>
           <PokemonSprites src={pData.sprites}/>
-          <PokemonDescription description={pData.description}/>
+          <div className="pokemon-description screen"
+               description={pData.description}>{props.description}</div>
         </div>
     );
   }
@@ -170,7 +169,6 @@ const PokemonName = (props) => {
 
 const RightSidePanel = (props) => {
   const { types } = props.pData;
-  const { moves } = props.pData;
   const { stats } = props.pData;
 
   if (types) {
@@ -184,11 +182,8 @@ const RightSidePanel = (props) => {
           </div>
 
           <PokemonEvolution
-              evolutionSprites={props.evolutionSprites}
+              PokemonSprites={props.PokemonSprites}
               evolutionNames={props.evolutionNames}/>
-          { /* <FlavorButtons/> */ }
-          <MoveList
-              moves={moves}/>
           <PokedexControls
               controls={props.controls}
               no={props.no}/>
@@ -337,140 +332,21 @@ const PokemonEvolutionSprite = (props) => {
   );
 };
 
-class MoveList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      index: 0,
-      currentMove: {},
-      loading: false,
-    };
-    this.nextMove = this.nextMove.bind(this);
-    this.prevMove = this.prevMove.bind(this);
-  }
-
-  componentDidMount() {
-    // console.log(this.props.moves[0].move.name);
-    this.loadMoves();
-  }
-
-  loadMoves() {
-    this.setState({ loading: true, index: this.state.index }, () => {
-      fetch(this.props.moves[this.state.index].move.url)
-        .then((response) => response.json())
-        .then((data) => {
-          this.setState({ currentMove: data, loading: false });
-        });
-    });
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.moves !== prevProps.moves) {
-      this.setState({ index: 0 }, this.loadMoves);
-    }
-  }
-
-  nextMove() {
-    const nextIndex = Math.min(this.state.index + 1, this.props.moves.length - 1);
-    this.setState({ index: nextIndex }, this.loadMoves);
-  }
-
-  prevMove() {
-    const nextIndex = Math.max(this.state.index - 1, 0);
-    this.setState({ index: nextIndex }, this.loadMoves);
-  }
-
-  render() {
-    let moves;
-    if (this.state.loading || Object.keys(this.state.currentMove).length === 0) {
-      moves = <MovesLoading />;
-    } else {
-      const lvl = this.props.moves[this.state.index].version_group_details[0].level_learned_at;
-      moves = <MoveEntry move={this.state.currentMove} lvl={lvl} />;
-    }
-
-    return (
-        <div className="move-list">
-          {moves}
-          <div className="move-controls">
-            <div className="move-arrow" onClick={this.prevMove}>
-              <i className="fas fa-caret-up" />
-            </div>
-            <div className="move-arrow" onClick={this.nextMove}>
-              <i className="fas fa-caret-down" />
-            </div>
-          </div>
-        </div>
-    );
-  }
-}
-
-function MovesLoading() {
-  return (
-      <div className="move-body move-screen screen">
-        <div className="move-left">
-          <div className="move-name" style={{ textTransform: 'none' }}>
-            xxxxx xxxxx
-          </div>
-          <div className="move-stat">{padStats('Accuracy', 'xx', '.', 16)}</div>
-          <div className="move-stat">{padStats('Power', 'xx', '.', 16)}</div>
-          <div className="move-stat">{padStats('PP', 'xx', '.', 16)}</div>
-        </div>
-        <div className="move-right">
-          <div className="move-type">Type: xxxxx</div>
-          {/* <div className="move-status">Status Effect: {status}</div> */}
-          <div className="move-learn">Learn: Lvl xx</div>
-        </div>
-      </div>
-  );
-}
-
-function MoveEntry(props) {
-  const { move } = props;
-  const name = move.name || move.names.filter((m) => m.language.name === 'en')[0].name;
-  const acc = move.accuracy;
-  const pow = move.power;
-  const { pp } = move;
-  const type = move.type.name;
-  const { lvl } = props;
-  return (
-      <div className="move-body move-screen screen">
-        <div className="move-left">
-          <div className="move-name">{name}</div>
-          <div className="move-stat">{padStats('Accuracy', acc, '.', 16)}</div>
-          <div className="move-stat">{padStats('Power', pow, '.', 16)}</div>
-          <div className="move-stat">{padStats('PP', pp, '.', 16)}</div>
-        </div>
-        <div className="move-right">
-          <div className="move-type">Type: {type}</div>
-          {/* <div className="move-status">Status Effect: {status}</div> */}
-          <div className="move-learn">Learn: Lvl {lvl}</div>
-        </div>
-      </div>
-  );
-}
-
 const PokedexControls = (props) => {
   return (
       <div className="panel-row controls">
-        <Button dir='left' onClick={props.controls.previous} />
-        <NumInput no={props.no} func={props.controls.pickPokemon} />
-        <Button dir ='right' onClick={props.controls.next} />
+        <button dir='left' onClick={props.controls.previous} />
+        <button logout={props} func={props.logout} />
+        <button dir ='right' onClick={props.controls.next} />
       </div>
   );
 };
 
-const Button = (props) => {
-  return <div className="button" onClick={props.onClick} />;
-};
 
-const Loading = () => {
-  return <h1> LOADING...</h1>;
-};
 
 const Type = (props) => {
   return <div className={`type ${props.type}`}>{props.type}</div>;
 };
 
 
-export default Pokedex;
+export default PokemonApp;

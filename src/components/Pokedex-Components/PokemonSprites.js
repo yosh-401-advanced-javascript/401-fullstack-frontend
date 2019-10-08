@@ -1,4 +1,5 @@
 import React from 'react';
+import SpriteController from './SpriteController';
 
 class PokemonSprites extends React.Component {
   constructor(props) {
@@ -10,7 +11,8 @@ class PokemonSprites extends React.Component {
   }
 
   imageBuilder = () => {
-    return this.state.front ? 'front' : 'back';
+    const facing = this.state.front ? 'front' : 'back';
+    return facing;
   };
 
   toggleFacing = () => {
@@ -38,17 +40,5 @@ class PokemonSprites extends React.Component {
     );
   }
 }
-
-const SpriteController = (props) => {
-  return (
-      <div className="sprite-controller">
-        <div className={`sprite-controller sprite-button-rotate ${!props.front ? 'sprite-control-selected' : ''}`}
-             onClick={props.spriteFunctions.front}
-        >
-      </div>
-      </div>
-  );
-};
-
 
 export default PokemonSprites;

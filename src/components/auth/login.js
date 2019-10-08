@@ -1,13 +1,13 @@
 import React from 'react';
 import { LoginContext } from './context';
 import If from '../If';
+import PokemonApp from '../Pokedex-Components/PokemonApp';
 
 class Login extends React.Component {
   static contextType = LoginContext;
 
   constructor(props) {
     super(props);
-
     this.state = { username: '', password: '' };
   }
 
@@ -24,11 +24,11 @@ class Login extends React.Component {
     return (
       <>
         <If condition={this.context.loggedIn}>
-          <button onClick={this.context.logout}>Log Out</button>
+          <PokemonApp logout={this.context.logout}/>
         </If>
 
         <If condition={!this.context.loggedIn}>
-          <form>
+          <form className="pokedex-wrapper login">
             <input
               placeholder="UserName"
               name="username"
@@ -40,8 +40,8 @@ class Login extends React.Component {
               type="password"
               onChange={this.handleChange}
             />
-            <button onClick={(e) => this.handleSubmit(e, 'signin')}>Sign In</button>
-            <button onClick={(e) => this.handleSubmit(e, 'signup')}>Sign Up</button>
+            <button className="singin" onClick={(e) => this.handleSubmit(e, 'signin')}>Sign In</button>
+            <button className="signup" onClick={(e) => this.handleSubmit(e, 'signup')}>Sign Up</button>
           </form>
         </If>
       </>

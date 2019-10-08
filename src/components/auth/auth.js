@@ -1,6 +1,7 @@
 import React from 'react';
 import { LoginContext } from './context';
 import If from '../If';
+import PokemonApp from '../PokemonApp';
 
 class Auth extends React.Component {
   static contextType = LoginContext;

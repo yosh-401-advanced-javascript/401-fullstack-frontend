@@ -45,6 +45,7 @@ class LoginProvider extends React.Component {
   };
 
   logout = () => {
+    console.log('here');
     this.setLoginState(false, null, {});
   };
 
