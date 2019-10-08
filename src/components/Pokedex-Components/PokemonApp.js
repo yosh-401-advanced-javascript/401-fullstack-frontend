@@ -50,13 +50,14 @@ class PokemonApp extends React.Component {
     })
     .then((response) => response.json())
     .then((pokeData) => {
-      console.log("pokedata: ", pokeData)
+      console.log("pokedata: ", pokeData);
       this.setState({
         pokemonData: pokeData,
         pokemonIDX: pokeData.id,
       });
+      console.log("fdsfdsfdsfdsfdsfdsfds", pokeData, pokeData.id);
       const speciesRequest = pokeData.species.url;
-
+console.log('yoooooooooooo', speciesRequest);
       return fetch(speciesRequest);
     }).then((response) => response.json())
   .then((pokeData) => {
@@ -75,7 +76,7 @@ class PokemonApp extends React.Component {
           .then((pokeData) => {
             const pokeAPI = 'http://pokeapi.co/api/v2/pokemon/';
             const firstEvolution = pokeData.chain;
-            console.log('adasdasdasdasdasd', firstEvolution);
+            console.log('adasdasdasdasdasd', pokeData);
             let secondEvolution;
             let thirdEvolution;
             const evolutionsArray = [];
@@ -96,11 +97,13 @@ class PokemonApp extends React.Component {
               evolutionsArray.push(e3);
             }
             Promise.all(evolutionsArray)
+                console.log("third", thirdEvolution)
             .then((response) => Promise.all(
                 response.map((responseValue) => responseValue.json()),
                 console.log(evolutionsArray),
             ))
             .then((pokemonDataList) => {
+              console.log("hey!", pokemonDataList);
               const sprites = pokemonDataList.map(
                   (img) => img.sprites.front_default,
               );
